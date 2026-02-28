@@ -36,6 +36,7 @@ func New(logger *slog.Logger, itemUC itemuc.UseCase) http.Handler {
 			r.Get("/latest", itemHandler.Latest)
 			r.Get("/{id}", itemHandler.Get)
 			r.Put("/{id}", itemHandler.Update)
+			r.Patch("/{id}", itemHandler.Patch)
 			r.Delete("/{id}", itemHandler.Delete)
 		})
 	})
