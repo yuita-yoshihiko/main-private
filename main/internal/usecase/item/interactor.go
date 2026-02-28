@@ -65,6 +65,26 @@ func (i *Interactor) UpdateItem(ctx context.Context, id uuid.UUID, name, descrip
 	return i.repo.Update(ctx, existing)
 }
 
+func (i *Interactor) PatchItem(ctx context.Context, id uuid.UUID, name, description *string) (domain.Item, error) {
+	existing, err := i.repo.FindByID(ctx, id)
+	if err != nil {
+		return domain.Item{}, err
+	}
+
+	if name != nil {
+		existing.Name = *name
+	}
+	if description != nil {
+		existing.Description = *description
+	}
+
+	if err := existing.Validate(); err != nil {
+		return domain.Item{}, err
+	}
+
+	return i.repo.Update(ctx, existing)
+}
+
 func (i *Interactor) DeleteItem(ctx context.Context, id uuid.UUID) error {
 	return i.repo.Delete(ctx, id)
 }
