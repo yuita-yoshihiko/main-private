@@ -23,13 +23,16 @@ func New(logger *slog.Logger, itemUC itemuc.UseCase) http.Handler {
 
 	healthHandler := handler.NewHealthHandler()
 	itemHandler := handler.NewItemHandler(itemUC)
+	statsHandler := handler.NewStatsHandler(itemUC)
 
 	r.Get("/health", healthHandler.Health)
 
 	r.Route("/api/v1", func(r chi.Router) {
+		r.Get("/stats", statsHandler.GetStats)
 		r.Route("/items", func(r chi.Router) {
 			r.Post("/", itemHandler.Create)
 			r.Get("/", itemHandler.List)
+			r.Get("/search", itemHandler.Search)
 			r.Get("/{id}", itemHandler.Get)
 			r.Put("/{id}", itemHandler.Update)
 			r.Delete("/{id}", itemHandler.Delete)
