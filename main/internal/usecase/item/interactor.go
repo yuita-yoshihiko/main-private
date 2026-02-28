@@ -2,6 +2,7 @@ package item
 
 import (
 	"context"
+	"strings"
 
 	"github.com/google/uuid"
 
@@ -30,6 +31,22 @@ func (i *Interactor) GetItem(ctx context.Context, id uuid.UUID) (domain.Item, er
 
 func (i *Interactor) ListItems(ctx context.Context) ([]domain.Item, error) {
 	return i.repo.FindAll(ctx)
+}
+
+func (i *Interactor) SearchItems(ctx context.Context, name string) ([]domain.Item, error) {
+	all, err := i.repo.FindAll(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	query := strings.ToLower(name)
+	result := make([]domain.Item, 0)
+	for _, item := range all {
+		if strings.Contains(strings.ToLower(item.Name), query) {
+			result = append(result, item)
+		}
+	}
+	return result, nil
 }
 
 func (i *Interactor) UpdateItem(ctx context.Context, id uuid.UUID, name, description string) (domain.Item, error) {
