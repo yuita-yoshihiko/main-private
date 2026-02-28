@@ -112,6 +112,33 @@ func (h *ItemHandler) Update(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, toItemResponse(item))
 }
 
+type patchItemRequest struct {
+	Name        *string `json:"name"`
+	Description *string `json:"description"`
+}
+
+func (h *ItemHandler) Patch(w http.ResponseWriter, r *http.Request) {
+	id, err := uuid.Parse(chi.URLParam(r, "id"))
+	if err != nil {
+		writeJSON(w, http.StatusBadRequest, ErrorResponse{Error: "invalid id format"})
+		return
+	}
+
+	var req patchItemRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		writeJSON(w, http.StatusBadRequest, ErrorResponse{Error: "invalid request body"})
+		return
+	}
+
+	item, err := h.uc.PatchItem(r.Context(), id, req.Name, req.Description)
+	if err != nil {
+		writeError(w, err)
+		return
+	}
+
+	writeJSON(w, http.StatusOK, toItemResponse(item))
+}
+
 func (h *ItemHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	id, err := uuid.Parse(chi.URLParam(r, "id"))
 	if err != nil {
