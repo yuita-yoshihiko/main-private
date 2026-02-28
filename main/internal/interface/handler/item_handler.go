@@ -127,6 +127,16 @@ func (h *ItemHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
+func (h *ItemHandler) Latest(w http.ResponseWriter, r *http.Request) {
+	item, err := h.uc.GetLatestItem(r.Context())
+	if err != nil {
+		writeError(w, err)
+		return
+	}
+
+	writeJSON(w, http.StatusOK, toItemResponse(item))
+}
+
 func (h *ItemHandler) Search(w http.ResponseWriter, r *http.Request) {
 	name := r.URL.Query().Get("name")
 	if name == "" {

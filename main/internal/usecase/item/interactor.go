@@ -68,3 +68,21 @@ func (i *Interactor) UpdateItem(ctx context.Context, id uuid.UUID, name, descrip
 func (i *Interactor) DeleteItem(ctx context.Context, id uuid.UUID) error {
 	return i.repo.Delete(ctx, id)
 }
+
+func (i *Interactor) GetLatestItem(ctx context.Context) (domain.Item, error) {
+	all, err := i.repo.FindAll(ctx)
+	if err != nil {
+		return domain.Item{}, err
+	}
+	if len(all) == 0 {
+		return domain.Item{}, domain.ErrNotFound
+	}
+
+	latest := all[0]
+	for _, item := range all[1:] {
+		if item.CreatedAt.After(latest.CreatedAt) {
+			latest = item
+		}
+	}
+	return latest, nil
+}
