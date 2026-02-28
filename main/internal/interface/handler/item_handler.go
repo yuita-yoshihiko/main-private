@@ -126,3 +126,24 @@ func (h *ItemHandler) Delete(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusNoContent)
 }
+
+func (h *ItemHandler) Search(w http.ResponseWriter, r *http.Request) {
+	name := r.URL.Query().Get("name")
+	if name == "" {
+		writeJSON(w, http.StatusBadRequest, ErrorResponse{Error: "name query parameter is required"})
+		return
+	}
+
+	items, err := h.uc.SearchItems(r.Context(), name)
+	if err != nil {
+		writeError(w, err)
+		return
+	}
+
+	resp := make([]itemResponse, len(items))
+	for i, item := range items {
+		resp[i] = toItemResponse(item)
+	}
+
+	writeJSON(w, http.StatusOK, resp)
+}
