@@ -111,6 +111,8 @@ git diff HEAD --numstat | awk '{add+=$1; del+=$2} END {print add+del}'
 
 `git diff HEAD` の内容を読み込み、変更を **意味のある単位** に分類する。
 
+> **注意**: `git diff HEAD` は既存ファイルへの変更のみを表示し、新規追加ファイル（untracked または staged new file）の内容は表示されない。新規ファイルが含まれる場合は、後述の「新規追加ファイルの内容確認」を必ず実施すること。
+
 ### 分類の考え方
 
 変更は以下の軸で分類する：
@@ -126,6 +128,26 @@ git diff HEAD --numstat | awk '{add+=$1; del+=$2} END {print add+del}'
 ```
 
 type: `feat` / `fix` / `refactor` / `docs` / `test` / `chore`
+
+### 新規追加ファイルの内容確認
+
+`git status` で新規追加ファイル（`??` または `A`）を特定し、**必ずファイルの内容を読み込んで確認する**。
+
+```bash
+# 新規追加ファイルの一覧を取得
+git status --short | grep -E '^(\?\?|A )'
+```
+
+確認する観点：
+
+- `.env`、APIキー、パスワード、トークン等の機密情報が含まれていないか
+- 自動生成ファイル（`*.pb.go`、`go.sum`、`package-lock.json` 等）が意図せず含まれていないか
+- `vendor/`、`node_modules/` 等の依存関係ディレクトリが含まれていないか
+- ファイルの目的・内容が変更の意図と一致しているか
+
+問題がある場合は「違和感のある差分の検出」と同じフォーマットでユーザーに確認する。
+
+---
 
 ### 違和感のある差分の検出
 
