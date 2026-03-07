@@ -1,0 +1,16 @@
+# Worktree Plus Configuration
+version: '1.0'
+
+# Default settings for worktrees
+defaults:
+  # Base directory for worktrees (relative to repository root)
+  base_dir: ./.claude/worktrees
+
+# Hooks that run after creating a worktree
+hooks:
+  post_create:
+    - type: copy
+      from: .env # Copy actual .env file (gitignored)
+      to: .env
+    - type: command
+      command: echo "Created new worktree!"
