@@ -2,7 +2,7 @@ version: "2"
 sql:
   - engine: "postgresql"
     schema: "internal/infrastructure/db/schema/schema.sql"
-    queries: "internal/infrastructure/db/queries/item.sql"
+    queries: "internal/infrastructure/db/queries/"
     gen:
       go:
         package: "sqlcdb"

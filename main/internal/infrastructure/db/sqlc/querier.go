@@ -12,6 +12,7 @@ import (
 
 type Querier interface {
 	CreateItem(ctx context.Context, arg CreateItemParams) (Item, error)
+	CreateStats(ctx context.Context, totalItems int32) (Stat, error)
 	DeleteItem(ctx context.Context, id uuid.UUID) error
 	GetItem(ctx context.Context, id uuid.UUID) (Item, error)
 	ListItems(ctx context.Context) ([]Item, error)

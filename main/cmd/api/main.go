@@ -14,6 +14,7 @@ import (
 	sqlcdb "main-private/main/internal/infrastructure/db/sqlc"
 	"main-private/main/internal/infrastructure/repository"
 	itemuc "main-private/main/internal/usecase/item"
+	statsuc "main-private/main/internal/usecase/stats"
 	"main-private/main/pkg/config"
 	"main-private/main/pkg/logger"
 	"main-private/main/pkg/server"
@@ -43,7 +44,10 @@ func main() {
 	itemRepo := repository.NewItemRepository(queries)
 	itemInteractor := itemuc.NewInteractor(itemRepo)
 
-	handler := server.New(log, itemInteractor)
+	statsRepo := repository.NewStatsRepository(queries)
+	statsInteractor := statsuc.NewInteractor(statsRepo)
+
+	handler := server.New(log, itemInteractor, statsInteractor)
 
 	srv := &http.Server{
 		Addr:         ":" + cfg.Port,

@@ -16,3 +16,9 @@ type Item struct {
 	CreatedAt   pgtype.Timestamptz `json:"createdAt"`
 	UpdatedAt   pgtype.Timestamptz `json:"updatedAt"`
 }
+
+type Stat struct {
+	ID         uuid.UUID          `json:"id"`
+	TotalItems int32              `json:"totalItems"`
+	CreatedAt  pgtype.Timestamptz `json:"createdAt"`
+}
