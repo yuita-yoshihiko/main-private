@@ -10,9 +10,10 @@ import (
 
 	"main-private/main/internal/interface/handler"
 	itemuc "main-private/main/internal/usecase/item"
+	statsuc "main-private/main/internal/usecase/stats"
 )
 
-func New(logger *slog.Logger, itemUC itemuc.UseCase) http.Handler {
+func New(logger *slog.Logger, itemUC itemuc.UseCase, statsUC statsuc.UseCase) http.Handler {
 	r := chi.NewRouter()
 
 	r.Use(middleware.RequestID)
@@ -23,12 +24,13 @@ func New(logger *slog.Logger, itemUC itemuc.UseCase) http.Handler {
 
 	healthHandler := handler.NewHealthHandler()
 	itemHandler := handler.NewItemHandler(itemUC)
-	statsHandler := handler.NewStatsHandler(itemUC)
+	statsHandler := handler.NewStatsHandler(itemUC, statsUC)
 
 	r.Get("/health", healthHandler.Health)
 
 	r.Route("/api/v1", func(r chi.Router) {
 		r.Get("/stats", statsHandler.GetStats)
+		r.Post("/stats", statsHandler.CreateStats)
 		r.Route("/items", func(r chi.Router) {
 			r.Post("/", itemHandler.Create)
 			r.Get("/", itemHandler.List)
